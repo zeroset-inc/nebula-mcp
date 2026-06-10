@@ -398,6 +398,33 @@ export const operationDocs = [
     "idempotent": false
   },
   {
+    "operationId": "memories.completeUpload",
+    "resource": "memories",
+    "action": "completeUpload",
+    "method": "POST",
+    "path": "/v1/memories/upload/{upload_session_id}/complete",
+    "summary": "Complete multipart upload session",
+    "description": "Finalize an upload session after every multipart upload part has been uploaded.",
+    "parameters": [
+      {
+        "name": "upload_session_id",
+        "in": "path",
+        "required": true,
+        "description": ""
+      }
+    ],
+    "requestBody": {
+      "required": true,
+      "schema": "CompleteMultipartUploadRequest"
+    },
+    "response": {
+      "schema": "WrappedCompleteMultipartUploadResponse",
+      "unwrapsTo": "CompleteMultipartUploadResponse"
+    },
+    "pagination": "none",
+    "idempotent": false
+  },
+  {
     "operationId": "memories.create",
     "resource": "memories",
     "action": "create",
@@ -423,8 +450,8 @@ export const operationDocs = [
     "action": "createUpload",
     "method": "POST",
     "path": "/v1/memories/upload",
-    "summary": "Get presigned URL for large file upload",
-    "description": "Get a presigned URL for uploading large files directly to S3.\n\nUse this for files larger than 5MB that cannot be sent inline as base64.\nAfter uploading, reference the file in memory creation using S3FileReference.\n\nArgs:\n    filename: Original filename (e.g., \"image.jpg\")\n    content_type: MIME type (e.g., \"image/jpeg\", \"application/pdf\")\n    file_size: Expected file size in bytes (max 100MB)\n\nReturns:\n    dict with:\n    - upload_url: Presigned URL for PUT request (expires in 1 hour)\n    - upload_headers: Headers that must be sent with the presigned PUT request\n    - s3_key: The S3 key to reference in memory creation\n    - bucket: S3 bucket name\n    - expires_in: Seconds until URL expires\n    - max_size: Maximum allowed file size",
+    "summary": "Create multipart upload session",
+    "description": "Create a workspace-scoped multipart upload session.",
     "parameters": [
       {
         "name": "filename",
@@ -443,12 +470,24 @@ export const operationDocs = [
         "in": "query",
         "required": true,
         "description": "Expected file size in bytes (max 100MB)"
+      },
+      {
+        "name": "collection_id",
+        "in": "query",
+        "required": false,
+        "description": "Optional target collection for workspace-scoped uploads."
+      },
+      {
+        "name": "client_idempotency_key",
+        "in": "query",
+        "required": false,
+        "description": "Optional client key for retrying upload-session creation."
       }
     ],
     "requestBody": null,
     "response": {
-      "schema": "WrappedPresignedUploadResponse",
-      "unwrapsTo": "PresignedUploadResponse"
+      "schema": "WrappedMultipartUploadSessionResponse",
+      "unwrapsTo": "MultipartUploadSessionResponse"
     },
     "pagination": "none",
     "idempotent": false
@@ -503,14 +542,14 @@ export const operationDocs = [
     "action": "deleteUpload",
     "method": "DELETE",
     "path": "/v1/memories/upload",
-    "summary": "Delete a previously uploaded S3 file",
-    "description": "Delete a file from S3 that was uploaded via a presigned URL.\nVerifies the caller owns the file via S3 object metadata.",
+    "summary": "Delete a pending upload session",
+    "description": "Delete a pending upload session and its staged object.",
     "parameters": [
       {
-        "name": "s3_key",
+        "name": "upload_session_id",
         "in": "query",
         "required": true,
-        "description": "S3 key of the file to delete (returned by POST /memories/upload)"
+        "description": "Upload session ID returned by memories.createUpload."
       }
     ],
     "requestBody": null,
@@ -647,6 +686,42 @@ export const operationDocs = [
     "response": {
       "schema": "inline",
       "unwrapsTo": "inline"
+    },
+    "pagination": "none",
+    "idempotent": false
+  },
+  {
+    "operationId": "memories.signUploadPart",
+    "resource": "memories",
+    "action": "signUploadPart",
+    "method": "POST",
+    "path": "/v1/memories/upload/{upload_session_id}/parts/{part_number}",
+    "summary": "Create multipart upload part URL",
+    "description": "Create a presigned URL for uploading one part of an existing memory upload session.",
+    "parameters": [
+      {
+        "name": "upload_session_id",
+        "in": "path",
+        "required": true,
+        "description": ""
+      },
+      {
+        "name": "part_number",
+        "in": "path",
+        "required": true,
+        "description": ""
+      },
+      {
+        "name": "checksum_sha256",
+        "in": "query",
+        "required": true,
+        "description": "Base64-encoded SHA-256 checksum for this part."
+      }
+    ],
+    "requestBody": null,
+    "response": {
+      "schema": "WrappedMultipartUploadPartResponse",
+      "unwrapsTo": "MultipartUploadPartResponse"
     },
     "pagination": "none",
     "idempotent": false

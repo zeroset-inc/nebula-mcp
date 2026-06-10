@@ -1,0 +1,12 @@
+{
+  "release-type": "node",
+  "prerelease": true,
+  "prerelease-type": "rc",
+  "packages": {
+    ".": {
+      "package-name": "@nebula-ai/sdk-mcp",
+      "component": "@nebula-ai/sdk-mcp",
+      "release-type": "node"
+    }
+  }
+}

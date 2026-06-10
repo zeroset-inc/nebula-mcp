@@ -1,0 +1,41 @@
+# CI for the generated @nebula-ai/sdk-mcp repo. Synced into
+# zeroset-inc/nebula-mcp by the upstream nebula-sdk-sync.yml workflow.
+
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - "auto/**"
+      - "nebula-internal/**"
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: typecheck + test + build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3.11"
+
+      - name: Install
+        run: bun install
+
+      - name: Typecheck
+        run: bunx tsc --noEmit
+
+      - name: Test
+        run: bun test
+
+      - name: Build dist/ for npm publish
+        run: bun run build

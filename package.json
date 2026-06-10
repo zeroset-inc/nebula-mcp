@@ -1,6 +1,6 @@
 {
   "name": "@nebula-ai/sdk-mcp",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Generated MCP server for the Nebula TypeScript SDK.",
   "license": "MIT",
   "homepage": "https://github.com/zeroset-inc/nebula-mcp",

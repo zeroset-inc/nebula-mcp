@@ -1,4 +1,4 @@
-# Publish @nebula-ai/sdk-mcp to npm. Triggered by `release: published`
+# Publish @nebula-ai/mcp-server to npm. Triggered by `release: published`
 # (created by the nebula-sdk-bot GitHub App in release-please.yml), or
 # manually via workflow_dispatch for re-publish recovery.
 
@@ -40,7 +40,7 @@ jobs:
         run: |
           sdk_range="$(node -p "require('./package.json').peerDependencies['@nebula-ai/sdk']")"
           if ! npm view "@nebula-ai/sdk@$sdk_range" version --json >/dev/null 2>&1; then
-            echo "::error::@nebula-ai/sdk@$sdk_range is not published yet. Publish the compatible TypeScript SDK before @nebula-ai/sdk-mcp."
+            echo "::error::@nebula-ai/sdk@$sdk_range is not published yet. Publish the compatible TypeScript SDK before @nebula-ai/mcp-server."
             exit 1
           fi
 

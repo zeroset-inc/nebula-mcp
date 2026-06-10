@@ -6,13 +6,13 @@ Generated MCP server for the Nebula TypeScript SDK.
 
 ```bash
 export NEBULA_API_KEY="your_api_key_here"
-npx -y @nebula-ai/sdk-mcp@latest
+npx -y @nebula-ai/mcp-server@latest
 ```
 
 For Streamable HTTP:
 
 ```bash
-npx -y @nebula-ai/sdk-mcp@latest --transport=http --port=3000
+npx -y @nebula-ai/mcp-server@latest --transport=http --port=3000
 ```
 
 HTTP mode authenticates each request with `Authorization: Bearer ...`.

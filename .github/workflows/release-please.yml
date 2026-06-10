@@ -1,4 +1,4 @@
-# Opens / maintains the @nebula-ai/sdk-mcp release PR. Merging the release PR
+# Opens / maintains the @nebula-ai/mcp-server release PR. Merging the release PR
 # creates a tagged GitHub Release; that release event triggers publish-npm.yml.
 
 name: release-please

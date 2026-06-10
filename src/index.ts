@@ -51,7 +51,7 @@ export function createNebulaMcpServer(options: NebulaMcpServerOptions = {}): Mcp
   const docs = options.operationDocs ?? operationDocs;
   const server = new McpServer(
     {
-      name: "nebula-sdk-mcp",
+      name: "nebula-mcp",
       version: "0.0.0-from-source",
       websiteUrl: "https://docs.zeroset.com/mcp-integration",
     },

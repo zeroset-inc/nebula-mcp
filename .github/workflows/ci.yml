@@ -1,4 +1,4 @@
-# CI for the generated @nebula-ai/sdk-mcp repo. Synced into
+# CI for the generated @nebula-ai/mcp-server repo. Synced into
 # zeroset-inc/nebula-mcp by the upstream nebula-sdk-sync.yml workflow.
 
 name: CI

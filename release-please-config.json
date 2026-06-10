@@ -1,5 +1,6 @@
 {
   "release-type": "node",
+  "versioning": "prerelease",
   "prerelease": true,
   "prerelease-type": "rc",
   "packages": {

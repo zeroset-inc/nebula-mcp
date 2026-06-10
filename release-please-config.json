@@ -6,7 +6,8 @@
     ".": {
       "package-name": "@nebula-ai/sdk-mcp",
       "component": "@nebula-ai/sdk-mcp",
-      "release-type": "node"
+      "release-type": "node",
+      "initial-version": "0.0.1"
     }
   }
 }

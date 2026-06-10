@@ -1,6 +1,6 @@
 {
   "name": "@nebula-ai/sdk-mcp",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Generated MCP server for the Nebula TypeScript SDK.",
   "license": "MIT",
   "homepage": "https://github.com/zeroset-inc/nebula-mcp",
@@ -26,7 +26,7 @@
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.mts",
   "bin": {
-    "nebula-sdk-mcp": "./dist/cli.mjs"
+    "nebula-sdk-mcp": "dist/cli.mjs"
   },
   "exports": {
     ".": {

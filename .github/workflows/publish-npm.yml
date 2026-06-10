@@ -1,0 +1,80 @@
+# Publish @nebula-ai/sdk-mcp to npm. Triggered by `release: published`
+# (created by the nebula-sdk-bot GitHub App in release-please.yml), or
+# manually via workflow_dispatch for re-publish recovery.
+
+name: Publish NPM
+
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+jobs:
+  preflight:
+    name: preflight
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.tag.outputs.version }}
+      tag: ${{ steps.tag.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve dist-tag from version
+        id: tag
+        run: |
+          version=$(node -p "require('./package.json').version")
+          if [[ "$version" == *from-source* ]]; then
+            echo "::error::Refusing to publish sentinel version '$version'. Dispatch this workflow against a release tag, not main."
+            exit 1
+          fi
+          if [[ "$version" == *-* ]]; then
+            tag=next
+          else
+            tag=latest
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "Publishing $version with --tag $tag"
+
+      - name: Verify compatible TypeScript SDK is published
+        run: |
+          sdk_range="$(node -p "require('./package.json').peerDependencies['@nebula-ai/sdk']")"
+          if ! npm view "@nebula-ai/sdk@$sdk_range" version --json >/dev/null 2>&1; then
+            echo "::error::@nebula-ai/sdk@$sdk_range is not published yet. Publish the compatible TypeScript SDK before @nebula-ai/sdk-mcp."
+            exit 1
+          fi
+
+  publish:
+    name: publish
+    needs: preflight
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3.11"
+
+      - name: Install
+        run: bun install
+
+      - name: Build dist/
+        run: bun run build
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Install npm@11.6.2 (required for OIDC trusted publishing)
+        run: npm install --prefix ../oidc-npm npm@11.6.2
+
+      # Auth uses npm trusted publishing via the workflow's id-token permission.
+      # No NODE_AUTH_TOKEN secret is required when the npm package has this
+      # repo/workflow/environment configured as a trusted publisher.
+      - name: Publish to npm with provenance via OIDC
+        run: ../oidc-npm/node_modules/.bin/npm publish --ignore-scripts --provenance --access public --tag ${{ needs.preflight.outputs.tag }}

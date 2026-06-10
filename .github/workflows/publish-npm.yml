@@ -21,17 +21,34 @@ jobs:
 
       - name: Resolve dist-tag from version
         id: tag
+        env:
+          RELEASE_PRERELEASE: ${{ github.event_name == 'release' && github.event.release.prerelease || false }}
         run: |
           version=$(node -p "require('./package.json').version")
           if [[ "$version" == *from-source* ]]; then
             echo "::error::Refusing to publish sentinel version '$version'. Dispatch this workflow against a release tag, not main."
             exit 1
           fi
+
+          is_prerelease_version=false
           if [[ "$version" == *-* ]]; then
+            is_prerelease_version=true
             tag=next
           else
             tag=latest
           fi
+
+          if [[ "$GITHUB_EVENT_NAME" == "release" ]]; then
+            if [[ "$RELEASE_PRERELEASE" == "true" && "$is_prerelease_version" != "true" ]]; then
+              echo "::error::GitHub prereleases must publish semver prerelease versions, got '$version'."
+              exit 1
+            fi
+            if [[ "$RELEASE_PRERELEASE" != "true" && "$is_prerelease_version" == "true" ]]; then
+              echo "::error::Stable GitHub releases must not publish semver prerelease versions, got '$version'."
+              exit 1
+            fi
+          fi
+
           echo "version=$version" >> "$GITHUB_OUTPUT"
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
           echo "Publishing $version with --tag $tag"

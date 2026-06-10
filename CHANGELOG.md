@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.8-rc](https://github.com/zeroset-inc/nebula-mcp/compare/@nebula-ai/mcp-server-v0.0.7...@nebula-ai/mcp-server-v0.0.8-rc) (2026-06-10)
+
+
+### Bug Fixes
+
+* regenerate from nebula@6deea96 ([#18](https://github.com/zeroset-inc/nebula-mcp/issues/18)) ([085ffb9](https://github.com/zeroset-inc/nebula-mcp/commit/085ffb91180bf713fbbf19be3fe707340574baab))
+
 ## [0.0.7](https://github.com/zeroset-inc/nebula-mcp/compare/@nebula-ai/mcp-server-v0.0.6...@nebula-ai/mcp-server-v0.0.7) (2026-06-10)
 
 
